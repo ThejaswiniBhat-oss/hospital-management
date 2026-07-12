@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-echo "==> Installing MySQL command-line client..."
+echo "==> Installing MySQL server (this takes a minute)..."
 sudo apt-get update -qq
-sudo apt-get install -y -qq default-mysql-client > /dev/null
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq mysql-server > /dev/null
 
-echo "==> Waiting for the MySQL server to start..."
-for i in $(seq 1 60); do
-    if mysqladmin ping -h 127.0.0.1 -u root -proot --silent 2>/dev/null; then
-        echo "    MySQL is up."
-        break
-    fi
-    sleep 2
-done
+echo "==> Starting MySQL..."
+sudo service mysql start
+sleep 5
+
+echo "==> Setting the root password..."
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'; CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY 'root'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 
 echo "==> Creating tables and loading sample data..."
 mysql -h 127.0.0.1 -u root -proot < db/schema.sql
@@ -24,5 +22,5 @@ echo ""
 echo "======================================================="
 echo " Setup complete."
 echo " Run the app with:   bash run.sh"
-echo " Then open the 'Desktop' port (6080), password: vscode"
+echo " Then open port 6080 (Desktop), password: vscode"
 echo "======================================================="
