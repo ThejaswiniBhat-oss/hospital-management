@@ -1,0 +1,41 @@
+{
+  "name": "Hospital Management (Java + Swing + MySQL)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": true
+    },
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "password": "vscode",
+      "webPort": "6080",
+      "vncPort": "5901"
+    }
+  },
+
+  "containerEnv": {
+    "DISPLAY": ":1"
+  },
+
+  "forwardPorts": [6080, 3306],
+  "portsAttributes": {
+    "6080": { "label": "Desktop (open this to see the Swing app)" },
+    "3306": { "label": "MySQL" }
+  },
+
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "cweijan.vscode-mysql-client2"
+      ]
+    }
+  },
+
+  "remoteUser": "vscode"
+}
